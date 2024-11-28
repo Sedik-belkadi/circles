@@ -7,9 +7,7 @@
 
 ## Auteurs
 
-- Prénom et nom (Code permanent)
-- Prénom et nom (Code permanent)
-- Prénom et nom (Code permanent)
+BELKADI MOHAMMED ESSEDIK BELM87290502
 
 ## Dépendances
 
