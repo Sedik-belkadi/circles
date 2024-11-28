@@ -12,7 +12,10 @@ enum menu_state {
     MENU_PLAY_FOCUS,       // Play choice has focus
     MENU_QUIT_FOCUS,       // Quit choice has focus
     MENU_PLAY,             // Play has been chosen
-    MENU_QUIT              // Play has been chosen
+    MENU_QUIT,              // Play has been chosen
+    MENU_EASY_FOCUS,       // Easy difficulty has focus
+    MENU_MEDIUM_FOCUS,     // Medium difficulty has focus
+    MENU_HARD_FOCUS        // Hard difficulty has focus
 };
 
 struct menu {
@@ -21,6 +24,10 @@ struct menu {
     struct spritesheet *title;      // The title sprite
     struct spritesheet *play;       // The play sprite
     struct spritesheet *quit;       // The quit sprite
+    struct spritesheet *difficulty; // New
+    struct spritesheet *easy;       // New
+    struct spritesheet *medium;     // New
+    struct spritesheet *hard;
     SDL_Renderer *renderer;         // The renderer
 };
 
