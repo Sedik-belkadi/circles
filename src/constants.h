@@ -2,6 +2,14 @@
 #define SCREEN_WIDTH  (0.5 * 2048)
 #define SCREEN_HEIGHT (0.5 * 1535)
 
+
+// Menu button heights (you can adjust these as needed)
+#define PLAY_HEIGHT 50
+#define QUIT_HEIGHT 50
+#define EASY_HEIGHT 50
+#define MEDIUM_HEIGHT 50
+#define HARD_HEIGHT 50
+
 // Menu constants
 #define BACKGROUND_FILENAME "../assets/background-small.png"
 #define BACKGROUND_X 0

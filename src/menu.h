@@ -9,6 +9,7 @@
 // --------------- //
 
 enum menu_state {
+    MENU_NO_FOCUS,
     MENU_PLAY_FOCUS,       // Play choice has focus
     MENU_QUIT_FOCUS,       // Quit choice has focus
     MENU_PLAY,             // Play has been chosen

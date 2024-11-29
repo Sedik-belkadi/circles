@@ -3,10 +3,15 @@
 #include "sdl2.h"
 
 #include <stdbool.h>
+#include <stdlib.h> // Added for malloc and free
 
 struct menu *menu_initialize(SDL_Renderer *renderer) {
     struct menu *menu;
     menu = malloc(sizeof(struct menu));
+    if (menu == NULL) {
+        fprintf(stderr, "Failed to allocate memory for menu\n");
+        return NULL;
+    }
     menu->renderer = renderer;
     menu->state = MENU_EASY_FOCUS;
     menu->background = spritesheet_create(BACKGROUND_FILENAME, 1, 1, 1, renderer);
@@ -33,35 +38,67 @@ void menu_run(struct menu *menu) {
             } else if (e.type == SDL_KEYDOWN) {
                 switch (e.key.keysym.sym) {
                     case SDLK_LEFT:
-                        // Cycle difficulty options left
-                        if (menu->state == MENU_EASY_FOCUS) {
-                            menu->state = MENU_HARD_FOCUS;
-                        } else if (menu->state == MENU_MEDIUM_FOCUS) {
-                            menu->state = MENU_EASY_FOCUS;
-                        } else if (menu->state == MENU_HARD_FOCUS) {
-                            menu->state = MENU_MEDIUM_FOCUS;
-                        }
+                        menu->state = (menu->state == MENU_EASY_FOCUS) ? MENU_HARD_FOCUS
+                                    : (menu->state == MENU_MEDIUM_FOCUS) ? MENU_EASY_FOCUS
+                                    : MENU_MEDIUM_FOCUS;
                         break;
                     case SDLK_RIGHT:
-                        // Cycle difficulty options right
-                        if (menu->state == MENU_EASY_FOCUS) {
-                            menu->state = MENU_MEDIUM_FOCUS;
-                        } else if (menu->state == MENU_MEDIUM_FOCUS) {
-                            menu->state = MENU_HARD_FOCUS;
-                        } else if (menu->state == MENU_HARD_FOCUS) {
-                            menu->state = MENU_EASY_FOCUS;
-                        }
+                        menu->state = (menu->state == MENU_EASY_FOCUS) ? MENU_MEDIUM_FOCUS
+                                    : (menu->state == MENU_MEDIUM_FOCUS) ? MENU_HARD_FOCUS
+                                    : MENU_EASY_FOCUS;
                         break;
                     case SDLK_RETURN:
-                        if (menu->state == MENU_PLAY_FOCUS) {
-                            menu->state = MENU_PLAY;
-                        } else if (menu->state == MENU_QUIT_FOCUS) {
-                            menu->state = MENU_QUIT;
-                        }
+                        if (menu->state == MENU_PLAY_FOCUS) menu->state = MENU_PLAY;
+                        else if (menu->state == MENU_QUIT_FOCUS) menu->state = MENU_QUIT;
                         break;
                 }
+            } else if (e.type == SDL_MOUSEMOTION) {
+                int mouse_x = e.motion.x;
+                int mouse_y = e.motion.y;
+
+                // Check hover over Play button
+                if (mouse_x >= PLAY_X - 60 && mouse_x <= PLAY_X + PLAY_WIDTH + 60 &&
+                    mouse_y >= PLAY_Y - 60 && mouse_y <= PLAY_Y + PLAY_HEIGHT + 60) {
+                    menu->state = MENU_PLAY_FOCUS;
+                }
+                // Check hover over Quit button
+                else if (mouse_x >= QUIT_X - 60 && mouse_x <= QUIT_X + QUIT_WIDTH + 60 &&
+                         mouse_y >= QUIT_Y - 60 && mouse_y <= QUIT_Y + QUIT_HEIGHT + 60) {
+                    menu->state = MENU_QUIT_FOCUS;
+                }
+                // Check hover over difficulty options
+                else if (mouse_x >= EASY_X - 10 && mouse_x <= EASY_X + EASY_WIDTH + 10 &&
+                         mouse_y >= EASY_Y - 10 && mouse_y <= EASY_Y + EASY_HEIGHT + 10) {
+                    menu->state = MENU_EASY_FOCUS;
+
+                } else if (mouse_x >= MEDIUM_X - 10 && mouse_x <= MEDIUM_X + MEDIUM_WIDTH + 10 &&
+                           mouse_y >= MEDIUM_Y - 10 && mouse_y <= MEDIUM_Y + MEDIUM_HEIGHT + 10) {
+                    menu->state = MENU_MEDIUM_FOCUS;
+                } else if (mouse_x >= HARD_X - 10 && mouse_x <= HARD_X + HARD_WIDTH + 10 &&
+                           mouse_y >= HARD_Y - 10 && mouse_y <= HARD_Y + HARD_HEIGHT + 10) {
+                    menu->state = MENU_HARD_FOCUS;
+                }
             }
-        }
+	      else if (e.type == SDL_MOUSEBUTTONDOWN) {
+                // Check for left mouse click
+                if (e.button.button == SDL_BUTTON_LEFT) {
+                    int mouse_x = e.button.x;
+                    int mouse_y = e.button.y;
+
+                    // Check if the click is inside the "Play" button
+                    if (mouse_x >= PLAY_X - 60 && mouse_x <= PLAY_X + PLAY_WIDTH + 60 &&
+                        mouse_y >= PLAY_Y - 60 && mouse_y <= PLAY_Y + PLAY_HEIGHT + 60) {
+                        menu->state = MENU_PLAY;
+                    }
+
+                    // Check if the click is inside the "Quit" button
+                    else if (mouse_x >= QUIT_X - 60 && mouse_x <= QUIT_X + QUIT_WIDTH + 60 &&
+                             mouse_y >= QUIT_Y - 60 && mouse_y <= QUIT_Y + QUIT_HEIGHT + 60) {
+                        menu->state = MENU_QUIT;
+                    }
+                }
+            }
+	}
 
         SDL_SetRenderDrawColor(menu->renderer, 0x00, 0x00, 0x00, 0x00);
         SDL_RenderClear(menu->renderer);
@@ -74,31 +111,17 @@ void menu_run(struct menu *menu) {
         spritesheet_render(menu->play, PLAY_X, PLAY_Y, menu_alpha(menu->state == MENU_PLAY_FOCUS), 0);
         spritesheet_render(menu->quit, QUIT_X, QUIT_Y, menu_alpha(menu->state == MENU_QUIT_FOCUS), 0);
 
-        // Render difficulty options, highlight the selected one
-        if (menu->state == MENU_EASY_FOCUS) {
-            spritesheet_render(menu->easy, EASY_X, EASY_Y, 255, 0);  // Highlighted
-            spritesheet_render(menu->medium, MEDIUM_X, MEDIUM_Y, 64, 0);  // Dimmed
-            spritesheet_render(menu->hard, HARD_X, HARD_Y, 64, 0);  // Dimmed
-        } else if (menu->state == MENU_MEDIUM_FOCUS) {
-            spritesheet_render(menu->easy, EASY_X, EASY_Y, 64, 0);  // Dimmed
-            spritesheet_render(menu->medium, MEDIUM_X, MEDIUM_Y, 255, 0);  // Highlighted
-            spritesheet_render(menu->hard, HARD_X, HARD_Y, 64, 0);  // Dimmed
-        } else if (menu->state == MENU_HARD_FOCUS) {
-            spritesheet_render(menu->easy, EASY_X, EASY_Y, 64, 0);  // Dimmed
-            spritesheet_render(menu->medium, MEDIUM_X, MEDIUM_Y, 64, 0);  // Dimmed
-            spritesheet_render(menu->hard, HARD_X, HARD_Y, 255, 0);  // Highlighted
-        }
+        // Render difficulty options
+        spritesheet_render(menu->easy, EASY_X, EASY_Y, menu_alpha(menu->state == MENU_EASY_FOCUS), 0);
+        spritesheet_render(menu->medium, MEDIUM_X, MEDIUM_Y, menu_alpha(menu->state == MENU_MEDIUM_FOCUS), 0);
+        spritesheet_render(menu->hard, HARD_X, HARD_Y, menu_alpha(menu->state == MENU_HARD_FOCUS), 0);
 
-        // Render the difficulty button itself (at the bottom)
+        // Render the difficulty button
         spritesheet_render(menu->difficulty, DIFFICULTY_X, DIFFICULTY_Y, 255, 0);
 
         SDL_RenderPresent(menu->renderer);
     }
 }
-//test8
-
-
-
 
 void menu_delete(struct menu *menu) {
     if (menu != NULL) {
