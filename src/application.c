@@ -1,4 +1,6 @@
 #include "application.h"
+#include "gameplay.h"
+#include "menu.h"
 #include "sdl2.h"
 #include <stdio.h>
 
@@ -35,6 +37,13 @@ struct application *application_initialize() {
         fprintf(stderr, "Failed to initialize menu: %s\n", IMG_GetError());
         return NULL;
     }
+    application->gameplay = gameplay_initialize(application->renderer);
+    if (application->gameplay == NULL) {
+        fprintf(stderr, "Failed to initialize gameplay...\n");
+        return NULL; // Make sure this exits initialization gracefully
+    }
+
+
     application->state = APPLICATION_STATE_MENU;
     return application;
 }
@@ -51,6 +60,7 @@ void application_run(struct application *application) {
                 }
                 break;
             case APPLICATION_STATE_PLAY:
+		gameplay_run(application->gameplay);
                 break;
             case APPLICATION_STATE_QUIT:
                 break;

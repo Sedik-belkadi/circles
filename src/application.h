@@ -20,6 +20,7 @@ struct application {
     struct menu *menu;            // The home menu
     SDL_Window* window;           // The window
     SDL_Renderer* renderer;       // The renderer
+    struct gameplay *gameplay;
 };
 
 // --------- //
