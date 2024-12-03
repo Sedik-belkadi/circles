@@ -12,8 +12,9 @@ typedef struct {
 float calculate_angle(int mouse_x, int mouse_y, int center_x, int center_y);
 Gameplay* gameplay_initialize(SDL_Renderer* renderer);
 void gameplay_run(Gameplay* gameplay);
-void render_triangle(SDL_Renderer* renderer, int center_x, int center_y, float angle);
+void render_triangle(SDL_Renderer* renderer, int center_x, int center_y, float angle, int radius);
 void gameplay_draw_circle(Gameplay* gameplay);
+void gameplay_draw_background(Gameplay* gameplay);
 
 #endif
 
