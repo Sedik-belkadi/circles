@@ -5,7 +5,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-// Function prototype for calculate_angle
+// Function to calculate angle between the mouse and center
 float calculate_angle(int mouse_x, int mouse_y, int center_x, int center_y) {
     return atan2(mouse_y - center_y, mouse_x - center_x);
 }
@@ -17,6 +17,15 @@ Gameplay* gameplay_initialize(SDL_Renderer* renderer) {
     gameplay->center_x = SCREEN_WIDTH / 2;
     gameplay->center_y = SCREEN_HEIGHT / 2;
     gameplay->is_running = 1;
+
+    // Initialize obstacles
+    gameplay->obstacles = malloc(sizeof(Obstacle) * 6);
+    for (int i = 0; i < 6; i++) {
+        gameplay->obstacles[i].angle = i * 2 * M_PI / 6;  // Evenly spaced angles
+        gameplay->obstacles[i].distance = SCREEN_HEIGHT * 0.8; // Start near the screen edges
+        gameplay->obstacles[i].appear_time = rand() % 100 + 1; // Random delay for obstacle appearance
+    }
+
     return gameplay;
 }
 
@@ -24,12 +33,8 @@ Gameplay* gameplay_initialize(SDL_Renderer* renderer) {
 void gameplay_run(Gameplay* gameplay) {
     SDL_Event event;
     int mouse_x, mouse_y;
-
     while (gameplay->is_running) {
-        // Get the current mouse position
         SDL_GetMouseState(&mouse_x, &mouse_y);
-
-        // Calculate the angle of the triangle based on mouse position
         float angle = calculate_angle(mouse_x, mouse_y, gameplay->center_x, gameplay->center_y);
 
         // Clear the screen
@@ -42,6 +47,9 @@ void gameplay_run(Gameplay* gameplay) {
         // Draw the central circle
         filledCircleRGBA(gameplay->renderer, gameplay->center_x, gameplay->center_y, 40, 128, 128, 128, 255);
 
+        // Render the obstacles
+        render_obstacles(gameplay);
+
         // Render the triangle moving around the circle
         render_triangle(gameplay->renderer, gameplay->center_x, gameplay->center_y, angle, 67);
 
@@ -53,6 +61,70 @@ void gameplay_run(Gameplay* gameplay) {
             if (event.type == SDL_QUIT) {
                 gameplay->is_running = 0;
             }
+        }
+
+        // Move obstacles closer to the center
+        move_obstacles(gameplay);
+    }
+}
+
+// Function to render the obstacles
+void render_obstacles(Gameplay* gameplay) {
+    for (int i = 0; i < 6; i++) {
+        float distance = gameplay->obstacles[i].distance;
+
+        if (distance < 40) {
+            continue;  // Skip rendering if too close to the center
+        }
+
+        // Ensure the obstacle's angle is aligned with the slice
+        float slice_angle = 2 * M_PI / 6; // 6 slices (in radians)
+
+        // Align angle to the left edge of the slice
+        float aligned_angle = (i * slice_angle) - (slice_angle / 18) - 1;
+
+        // Define the angular bounds of the slice (start and end angles)
+        float start_angle = aligned_angle;
+        float end_angle = aligned_angle + slice_angle;
+
+        // Render a precise thick arc for the obstacle (aligned with the slice)
+        for (int thickness = 0; thickness < 5; thickness++) {
+            arcRGBA(
+                gameplay->renderer,
+                gameplay->center_x,
+                gameplay->center_y,
+                (Sint16)(distance - thickness),
+                (Sint16)((start_angle * 180.0) / M_PI),
+                (Sint16)((end_angle * 180.0) / M_PI),
+                255, 0, 0, 255 // Red arc
+            );
+        }
+    }
+}
+
+
+
+
+// Function to move the obstacles towards the center
+void move_obstacles(Gameplay* gameplay) {
+    const float reset_distance = SCREEN_HEIGHT * 0.8; // Reset distance when obstacles reappear
+    const float speed = 4.0; // Movement speed
+
+    for (int i = 0; i < 6; i++) {
+        // If the obstacle is already on the screen, move it
+        if (gameplay->obstacles[i].appear_time <= 0) {
+            if (gameplay->obstacles[i].distance > 40) {
+                gameplay->obstacles[i].distance -= speed; // Move obstacle closer
+            } else {
+                // Reset obstacle to maximum distance when it disappears
+                gameplay->obstacles[i].distance = reset_distance;
+            }
+
+            // Align obstacle with its corresponding slice
+            gameplay->obstacles[i].angle = i * 2 * M_PI / 6; // Evenly spaced angles (aligned with slices)
+        } else {
+            // Countdown for when the obstacle should appear
+            gameplay->obstacles[i].appear_time--;
         }
     }
 }
