@@ -8,6 +8,7 @@ typedef struct {
     float angle;   // Angle of the obstacle
     float distance;  // Distance from the center
     int appear_time;
+    int reappearance_time;
 } Obstacle;
 
 typedef struct {

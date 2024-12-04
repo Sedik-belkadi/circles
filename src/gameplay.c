@@ -24,6 +24,7 @@ Gameplay* gameplay_initialize(SDL_Renderer* renderer) {
         gameplay->obstacles[i].angle = i * 2 * M_PI / 6;  // Evenly spaced angles
         gameplay->obstacles[i].distance = SCREEN_HEIGHT * 0.8; // Start near the screen edges
         gameplay->obstacles[i].appear_time = rand() % 100 + 1; // Random delay for obstacle appearance
+        gameplay->obstacles[i].reappearance_time = (i + 1) * 10 + (rand() % 10); // Initially no delay for reappearance
     }
 
     return gameplay;
@@ -71,6 +72,10 @@ void gameplay_run(Gameplay* gameplay) {
 // Function to render the obstacles
 void render_obstacles(Gameplay* gameplay) {
     for (int i = 0; i < 6; i++) {
+        if (gameplay->obstacles[i].reappearance_time > 0) {
+            continue; // Skip rendering if still in delay
+        }
+
         float distance = gameplay->obstacles[i].distance;
 
         if (distance < 40) {
@@ -88,7 +93,7 @@ void render_obstacles(Gameplay* gameplay) {
         float end_angle = aligned_angle + slice_angle;
 
         // Render a precise thick arc for the obstacle (aligned with the slice)
-        for (int thickness = 0; thickness < 5; thickness++) {
+        for (int thickness = 0; thickness < 10; thickness++) {
             arcRGBA(
                 gameplay->renderer,
                 gameplay->center_x,
@@ -104,30 +109,35 @@ void render_obstacles(Gameplay* gameplay) {
 
 
 
-
 // Function to move the obstacles towards the center
 void move_obstacles(Gameplay* gameplay) {
     const float reset_distance = SCREEN_HEIGHT * 0.8; // Reset distance when obstacles reappear
-    const float speed = 4.0; // Movement speed
+    const float speed = 7.0; // Movement speed
 
     for (int i = 0; i < 6; i++) {
-        // If the obstacle is already on the screen, move it
-        if (gameplay->obstacles[i].appear_time <= 0) {
-            if (gameplay->obstacles[i].distance > 40) {
-                gameplay->obstacles[i].distance -= speed; // Move obstacle closer
-            } else {
-                // Reset obstacle to maximum distance when it disappears
-                gameplay->obstacles[i].distance = reset_distance;
-            }
-
-            // Align obstacle with its corresponding slice
-            gameplay->obstacles[i].angle = i * 2 * M_PI / 6; // Evenly spaced angles (aligned with slices)
-        } else {
-            // Countdown for when the obstacle should appear
-            gameplay->obstacles[i].appear_time--;
+        // If obstacle is waiting to reappear
+        if (gameplay->obstacles[i].reappearance_time > 0) {
+            gameplay->obstacles[i].reappearance_time--; // Countdown for reappearance
+            continue; // Skip further processing until it's time to reappear
         }
+
+        // Move the obstacle
+        if (gameplay->obstacles[i].distance > 40) {
+            gameplay->obstacles[i].distance -= speed; // Move obstacle closer
+        } else {
+            // Reset obstacle to maximum distance when it disappears
+            gameplay->obstacles[i].distance = reset_distance;
+
+            // Assign a new random delay under 1 second for reappearance
+            gameplay->obstacles[i].reappearance_time = rand() % 60; // Max 1 second at 60 FPS
+        }
+
+        // Align obstacle with its corresponding slice
+        gameplay->obstacles[i].angle = i * 2 * M_PI / 6; // Evenly spaced angles (aligned with slices)
     }
 }
+
+
 
 // Function to render the triangle
 void render_triangle(SDL_Renderer* renderer, int center_x, int center_y, float angle, int radius) {
