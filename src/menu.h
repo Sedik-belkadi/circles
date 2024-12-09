@@ -2,6 +2,7 @@
 #define MENU_H
 
 #include "sdl2.h"
+#include <SDL2/SDL_mixer.h> 
 #include "constants.h"
 
 // --------------- //
@@ -29,7 +30,9 @@ struct menu {
     struct spritesheet *easy;       // New
     struct spritesheet *medium;     // New
     struct spritesheet *hard;
+    int selected_difficulty;
     SDL_Renderer *renderer;         // The renderer
+    Mix_Chunk *click_sound;
 };
 
 // --------- //

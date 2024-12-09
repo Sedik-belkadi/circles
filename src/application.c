@@ -44,7 +44,8 @@ struct application *application_initialize() {
     if (!application->menu_music) {
         fprintf(stderr, "Failed to load menu music: %s\n", Mix_GetError());
         return NULL;
-    }  
+    }
+
 
     application->gameplay_music = Mix_LoadMUS("../assets/courtesy.mp3");
     if (!application->gameplay_music) {
