@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 #include <math.h>
 
+
 typedef struct {
     float angle;   // Angle of the obstacle
     float distance;  // Distance from the center
@@ -11,7 +12,7 @@ typedef struct {
     int reappearance_time;
 } Obstacle;
 
-typedef struct {
+typedef struct gameplay {
     SDL_Renderer* renderer;
     int is_running;
     int center_x, center_y;

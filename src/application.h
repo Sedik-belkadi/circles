@@ -4,6 +4,8 @@
 #include "sdl2.h"
 #include "constants.h"
 #include "menu.h"
+#include <SDL_mixer.h>
+
 
 // --------------- //
 // Data structures //
@@ -20,6 +22,8 @@ struct application {
     struct menu *menu;            // The home menu
     SDL_Window* window;           // The window
     SDL_Renderer* renderer;       // The renderer
+    Mix_Music *menu_music;
+    Mix_Music *gameplay_music;
     struct gameplay *gameplay;
 };
 
