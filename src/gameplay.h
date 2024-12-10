@@ -31,6 +31,7 @@ void gameplay_draw_background(Gameplay* gameplay);
 void move_obstacles(Gameplay* gameplay);
 void render_obstacles(Gameplay* gameplay);
 void display_game_over(SDL_Renderer* renderer);
+void gameplay_cleanup(Gameplay* gameplay);
 int check_collision(Gameplay* gameplay, float triangle_angle);
 
 #endif

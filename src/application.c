@@ -82,21 +82,30 @@ void application_run(struct application *application) {
                 if (application->menu->state == MENU_QUIT) {
                     application->state = APPLICATION_STATE_QUIT;
                 } else if (application->menu->state == MENU_PLAY) {
-                    application->state = APPLICATION_STATE_PLAY;
+		    application->state = APPLICATION_STATE_PLAY;
                     Mix_HaltMusic();
                 }
                 break;
 
             case APPLICATION_STATE_PLAY:
+                if (application->gameplay == NULL) {
+                    application->gameplay = gameplay_initialize(application->renderer);
+                }
                 if (Mix_PlayingMusic() == 0) {
                     Mix_PlayMusic(application->gameplay_music, -1);
-		    Mix_VolumeMusic(MIX_MAX_VOLUME);
+                    Mix_VolumeMusic(MIX_MAX_VOLUME);
                 }
                 gameplay_run(application->gameplay, application->menu);
-		if (application->menu->state == MENU_STATE) {
+
+                if (application->menu->state == MENU_STATE) {
                     application->state = APPLICATION_STATE_MENU;
-		    Mix_PlayMusic(application->gameplay_music, -1);
-                    Mix_VolumeMusic(MIX_MAX_VOLUME / 10);
+
+                // Cleanup gameplay state to prepare for a new game
+                gameplay_cleanup(application->gameplay);
+                application->gameplay = NULL;
+
+                Mix_PlayMusic(application->menu_music, -1);
+                Mix_VolumeMusic(MIX_MAX_VOLUME / 10);
                 }
                 break;
 

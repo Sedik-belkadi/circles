@@ -272,7 +272,12 @@ void display_game_over(SDL_Renderer* renderer) {
 }
 
 
-
+void gameplay_cleanup(Gameplay* gameplay) {
+    if (gameplay) {
+        free(gameplay->obstacles);
+        free(gameplay);
+    }
+}
 
 
 
