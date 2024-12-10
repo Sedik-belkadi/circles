@@ -75,6 +75,7 @@ void application_run(struct application *application) {
         switch (application->state) {
             case APPLICATION_STATE_MENU:
                 if (Mix_PlayingMusic() == 0) {
+		    Mix_VolumeMusic(MIX_MAX_VOLUME / 10);
                     Mix_PlayMusic(application->menu_music, -1);
                 }
                 menu_run(application->menu);
@@ -85,17 +86,26 @@ void application_run(struct application *application) {
                     Mix_HaltMusic();
                 }
                 break;
+
             case APPLICATION_STATE_PLAY:
                 if (Mix_PlayingMusic() == 0) {
                     Mix_PlayMusic(application->gameplay_music, -1);
+		    Mix_VolumeMusic(MIX_MAX_VOLUME);
                 }
-                gameplay_run(application->gameplay);
+                gameplay_run(application->gameplay, application->menu);
+		if (application->menu->state == MENU_STATE) {
+                    application->state = APPLICATION_STATE_MENU;
+		    Mix_PlayMusic(application->gameplay_music, -1);
+                    Mix_VolumeMusic(MIX_MAX_VOLUME / 10);
+                }
                 break;
+
             case APPLICATION_STATE_QUIT:
                 break;
         }
     }
 }
+
 
 
 void application_shut_down(struct application *application) {

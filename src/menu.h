@@ -17,7 +17,8 @@ enum menu_state {
     MENU_QUIT,              // Play has been chosen
     MENU_EASY_FOCUS,       // Easy difficulty has focus
     MENU_MEDIUM_FOCUS,     // Medium difficulty has focus
-    MENU_HARD_FOCUS        // Hard difficulty has focus
+    MENU_HARD_FOCUS,        // Hard difficulty has focus
+    MENU_STATE
 };
 
 struct menu {

@@ -2,7 +2,9 @@
 #include "gameplay.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL2_gfxPrimitives.h>
+#include <SDL2/SDL_image.h>
 #include <math.h>
+#include <time.h>
 #include <stdlib.h>
 
 // Function to calculate angle between the mouse and center
@@ -31,9 +33,10 @@ Gameplay* gameplay_initialize(SDL_Renderer* renderer) {
 }
 
 // Function to run the game loop
-void gameplay_run(Gameplay* gameplay) {
+void gameplay_run(Gameplay* gameplay, struct menu *menu) {
     SDL_Event event;
     int mouse_x, mouse_y;
+
     while (gameplay->is_running) {
         SDL_GetMouseState(&mouse_x, &mouse_y);
         float angle = calculate_angle(mouse_x, mouse_y, gameplay->center_x, gameplay->center_y);
@@ -60,14 +63,21 @@ void gameplay_run(Gameplay* gameplay) {
         // Handle SDL events
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
-                gameplay->is_running = 0;
+                gameplay->is_running = 0; // End game
             }
         }
 
         // Move obstacles closer to the center
         move_obstacles(gameplay);
+
+        if (check_collision(gameplay, angle)) {
+            gameplay->is_running = 0; // Set game over condition
+	    display_game_over(gameplay->renderer);
+	    menu->state = MENU_STATE;
+        }
     }
 }
+
 
 // Function to render the obstacles
 void render_obstacles(Gameplay* gameplay) {
@@ -112,7 +122,7 @@ void render_obstacles(Gameplay* gameplay) {
 // Function to move the obstacles towards the center
 void move_obstacles(Gameplay* gameplay) {
     const float reset_distance = SCREEN_HEIGHT * 0.8; // Reset distance when obstacles reappear
-    const float speed = 7.0; // Movement speed
+    const float speed = 9.0; // Movement speed
 
     for (int i = 0; i < 6; i++) {
         // If obstacle is waiting to reappear
@@ -135,6 +145,24 @@ void move_obstacles(Gameplay* gameplay) {
         // Align obstacle with its corresponding slice
         gameplay->obstacles[i].angle = i * 2 * M_PI / 6; // Evenly spaced angles (aligned with slices)
     }
+}
+
+// Function to check collision between the triangle and obstacles
+int check_collision(Gameplay* gameplay, float triangle_angle) {
+    for (int i = 0; i < 6; i++) {
+        float obstacle_angle = gameplay->obstacles[i].angle;
+        float distance = gameplay->obstacles[i].distance;
+
+        // Check if the triangle is within the obstacle's bounds
+        float slice_angle = 2 * M_PI / 6;
+        float start_angle = obstacle_angle - slice_angle / 2;
+        float end_angle = obstacle_angle + slice_angle / 2;
+
+        if (distance <= 67 && triangle_angle >= start_angle && triangle_angle <= end_angle) {
+            return 1; // Collision detected
+        }
+    }
+    return 0;
 }
 
 
@@ -185,4 +213,66 @@ void gameplay_draw_background(Gameplay* gameplay) {
         }
     }
 }
+
+void display_game_over(SDL_Renderer* renderer) {
+    // Load the PNG image
+    SDL_Surface* surface = IMG_Load("../assets/game_over.png");
+    if (!surface) {
+        fprintf(stderr, "Failed to load game over image: %s\n", IMG_GetError());
+        return;
+    }
+
+    Mix_Chunk *game_over_sound = Mix_LoadWAV("../assets/game over.wav");
+    if (game_over_sound == NULL) {
+        printf("Failed to load game over sound! SDL_mixer Error: %s\n", Mix_GetError());
+    }
+
+    // Stop the background music
+    if (Mix_PlayingMusic()) {
+        Mix_HaltMusic();
+    }
+
+    // Play the game over sound
+    if (game_over_sound != NULL) {
+        Mix_PlayChannel(-1, game_over_sound, 0); // Play sound once on the first available channel
+    }
+
+    // Convert the surface to a texture for rendering
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_FreeSurface(surface); // Free the surface as it's no longer needed
+
+    if (!texture) {
+        fprintf(stderr, "Failed to create texture: %s\n", SDL_GetError());
+        return;
+    }
+
+    // Clear the screen
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Black background
+    SDL_RenderClear(renderer);
+
+    // Get texture dimensions
+    int texture_width, texture_height;
+    SDL_QueryTexture(texture, NULL, NULL, &texture_width, &texture_height);
+
+    // Define the destination rectangle to center the image
+    SDL_Rect dest_rect = {
+        .x = (SCREEN_WIDTH - texture_width) / 2,
+        .y = (SCREEN_HEIGHT - texture_height) / 2,
+        .w = texture_width,
+        .h = texture_height
+    };
+
+    // Render the texture
+    SDL_RenderCopy(renderer, texture, NULL, &dest_rect);
+    SDL_RenderPresent(renderer); // Present the renderer
+
+    SDL_Delay(2000); // Display the game over image for 2 seconds
+
+    SDL_DestroyTexture(texture); // Clean up the texture
+}
+
+
+
+
+
 

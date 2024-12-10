@@ -29,7 +29,7 @@ struct menu *menu_initialize(SDL_Renderer *renderer) {
     if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
         fprintf(stderr, "SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
     }
-    menu->click_sound = Mix_LoadWAV("../assets/click.wav"); // Replace "click.wav" with your sound file
+    menu->click_sound = Mix_LoadWAV("../assets/click.wav");
     if (menu->click_sound == NULL) {
         fprintf(stderr, "Failed to load click sound! SDL_mixer Error: %s\n", Mix_GetError());
     }
