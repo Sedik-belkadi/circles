@@ -4,6 +4,8 @@
 #include <SDL2/SDL.h>
 #include <math.h>
 #include "application.h"
+#include "spritesheet.h"
+
 
 
 typedef struct {
@@ -19,6 +21,9 @@ typedef struct gameplay {
     int center_x, center_y;
     Obstacle* obstacles;
     struct application* application;
+    int is_gameplay_started;
+    Uint32 timer_start_time;
+    struct spritesheet* timer_spritesheet;
 } Gameplay;
 
 
@@ -33,6 +38,10 @@ void render_obstacles(Gameplay* gameplay);
 void display_game_over(SDL_Renderer* renderer);
 void gameplay_cleanup(Gameplay* gameplay);
 int check_collision(Gameplay* gameplay, float triangle_angle);
+void render_timer(Gameplay* gameplay);
+
+
 
 #endif
+
 

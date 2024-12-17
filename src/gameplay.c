@@ -1,5 +1,6 @@
 #include "constants.h"
 #include "gameplay.h"
+#include "spritesheet.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL2_gfxPrimitives.h>
 #include <SDL2/SDL_image.h>
@@ -12,6 +13,7 @@ float calculate_angle(int mouse_x, int mouse_y, int center_x, int center_y) {
     return atan2(mouse_y - center_y, mouse_x - center_x);
 }
 
+
 // Function to initialize the gameplay
 Gameplay* gameplay_initialize(SDL_Renderer* renderer) {
     Gameplay* gameplay = malloc(sizeof(Gameplay));
@@ -19,6 +21,7 @@ Gameplay* gameplay_initialize(SDL_Renderer* renderer) {
     gameplay->center_x = SCREEN_WIDTH / 2;
     gameplay->center_y = SCREEN_HEIGHT / 2;
     gameplay->is_running = 1;
+    gameplay->is_gameplay_started = 0;  // Added to track if gameplay has started
 
     // Initialize obstacles
     gameplay->obstacles = malloc(sizeof(Obstacle) * 6);
@@ -28,9 +31,66 @@ Gameplay* gameplay_initialize(SDL_Renderer* renderer) {
         gameplay->obstacles[i].appear_time = rand() % 100 + 1; // Random delay for obstacle appearance
         gameplay->obstacles[i].reappearance_time = (i + 1) * 10 + (rand() % 10); // Initially no delay for reappearance
     }
+    // Initialize timer
+    gameplay->timer_start_time = 0; // Set to 0 initially, it will be set when gameplay starts
+    gameplay->timer_spritesheet = spritesheet_create("../assets/digits-small-first.png", 1, 10, 10, renderer);
 
     return gameplay;
 }
+
+
+// Function to start the timer when gameplay starts
+void start_timer(Gameplay* gameplay) {
+    if (!gameplay->is_gameplay_started) {
+        gameplay->timer_start_time = SDL_GetTicks();
+        gameplay->is_gameplay_started = 1;
+    }
+}
+
+// Function to render the timer
+void render_timer(Gameplay* gameplay) {
+    if (!gameplay->is_gameplay_started) {
+        return; // Don't render the timer until gameplay starts
+    }
+
+    Uint32 current_time = SDL_GetTicks();
+    Uint32 elapsed_time = (current_time - gameplay->timer_start_time) / 1000;
+
+    int minutes = elapsed_time / 60;
+    int seconds = elapsed_time % 60;
+
+    // Get the window size to calculate the top-right corner position
+    int window_width, window_height;
+    SDL_GetRendererOutputSize(gameplay->renderer, &window_width, &window_height);
+
+    // Position the timer at the top-right corner
+    int x = window_width - 170; // Adjust as needed to fit the timer
+    int y = 10; // Distance from the top
+
+    // Render minutes (tens and units)
+    int minute_tens = minutes / 10;
+    int minute_units = minutes % 10;
+
+    spritesheet_render(gameplay->timer_spritesheet, x, y, 255, minute_tens); // Tens digit
+    x += gameplay->timer_spritesheet->sprite_width; // Reduced spacing between digits
+    spritesheet_render(gameplay->timer_spritesheet, x, y, 255, minute_units); // Units digit
+    x += gameplay->timer_spritesheet->sprite_width;
+
+    // Render point (static sprite index 10 for the point in the spritesheet)
+    spritesheet_render(gameplay->timer_spritesheet, x, y, 255, 10); // Index for point it should be nine but u gotta edit the pic
+    x += gameplay->timer_spritesheet->sprite_width;
+
+    // Render seconds (tens and units)
+    int second_tens = seconds / 10;
+    int second_units = seconds % 10;
+
+    spritesheet_render(gameplay->timer_spritesheet, x, y, 255, second_tens); // Tens digit
+    x += gameplay->timer_spritesheet->sprite_width - 3;
+    spritesheet_render(gameplay->timer_spritesheet, x, y, 255, second_units); // Units digit
+}
+
+
+
 
 // Function to run the game loop
 void gameplay_run(Gameplay* gameplay, struct menu *menu) {
@@ -51,9 +111,14 @@ void gameplay_run(Gameplay* gameplay, struct menu *menu) {
         // Draw the central circle
         filledCircleRGBA(gameplay->renderer, gameplay->center_x, gameplay->center_y, 40, 128, 128, 128, 255);
 
+        // Start the timer once the gameplay has begun
+        start_timer(gameplay);
+
+        // Render the timer
+        render_timer(gameplay);
+
         // Render the obstacles
         render_obstacles(gameplay);
-
         // Render the triangle moving around the circle
         render_triangle(gameplay->renderer, gameplay->center_x, gameplay->center_y, angle, 67);
 
@@ -72,8 +137,8 @@ void gameplay_run(Gameplay* gameplay, struct menu *menu) {
 
         if (check_collision(gameplay, angle)) {
             gameplay->is_running = 0; // Set game over condition
-	    display_game_over(gameplay->renderer);
-	    menu->state = MENU_STATE;
+            display_game_over(gameplay->renderer);
+            menu->state = MENU_STATE;
         }
     }
 }
@@ -278,6 +343,7 @@ void gameplay_cleanup(Gameplay* gameplay) {
         free(gameplay);
     }
 }
+
 
 
 
