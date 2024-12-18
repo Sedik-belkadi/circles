@@ -32,6 +32,7 @@ struct menu {
     struct spritesheet *medium;     // New
     struct spritesheet *hard;
     int selected_difficulty;
+    int difficulty_speed; // Speed based on difficulty
     SDL_Renderer *renderer;         // The renderer
     Mix_Chunk *click_sound;
 };

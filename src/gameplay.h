@@ -33,7 +33,7 @@ void gameplay_run(Gameplay* gameplay, struct menu *menu);
 void render_triangle(SDL_Renderer* renderer, int center_x, int center_y, float angle, int radius);
 void gameplay_draw_circle(Gameplay* gameplay);
 void gameplay_draw_background(Gameplay* gameplay);
-void move_obstacles(Gameplay* gameplay);
+void move_obstacles(Gameplay* gameplay, struct menu *menu);
 void render_obstacles(Gameplay* gameplay);
 void display_game_over(SDL_Renderer* renderer);
 void gameplay_cleanup(Gameplay* gameplay);

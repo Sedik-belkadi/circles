@@ -64,7 +64,7 @@ void render_timer(Gameplay* gameplay) {
     SDL_GetRendererOutputSize(gameplay->renderer, &window_width, &window_height);
 
     // Position the timer at the top-right corner
-    int x = window_width - 170; // Adjust as needed to fit the timer
+    int x = window_width - 190; // Adjust as needed to fit the timer
     int y = 10; // Distance from the top
 
     // Render minutes (tens and units)
@@ -133,7 +133,7 @@ void gameplay_run(Gameplay* gameplay, struct menu *menu) {
         }
 
         // Move obstacles closer to the center
-        move_obstacles(gameplay);
+        move_obstacles(gameplay, menu);
 
         if (check_collision(gameplay, angle)) {
             gameplay->is_running = 0; // Set game over condition
@@ -185,9 +185,9 @@ void render_obstacles(Gameplay* gameplay) {
 
 
 // Function to move the obstacles towards the center
-void move_obstacles(Gameplay* gameplay) {
+void move_obstacles(Gameplay* gameplay, struct menu *menu) {
     const float reset_distance = SCREEN_HEIGHT * 0.8; // Reset distance when obstacles reappear
-    const float speed = 9.0; // Movement speed
+    const float speed = menu->difficulty_speed; // Movement speed
 
     for (int i = 0; i < 6; i++) {
         // If obstacle is waiting to reappear
