@@ -24,6 +24,7 @@ typedef struct gameplay {
     int is_gameplay_started;
     Uint32 timer_start_time;
     struct spritesheet* timer_spritesheet;
+    struct spritesheet* dot_spritesheet;
 } Gameplay;
 
 

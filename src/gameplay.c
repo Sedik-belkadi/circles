@@ -34,6 +34,7 @@ Gameplay* gameplay_initialize(SDL_Renderer* renderer) {
     // Initialize timer
     gameplay->timer_start_time = 0; // Set to 0 initially, it will be set when gameplay starts
     gameplay->timer_spritesheet = spritesheet_create("../assets/digits-small-first.png", 1, 10, 10, renderer);
+    gameplay->dot_spritesheet = spritesheet_create("../assets/digits-small.png", 1, 10, 10, renderer);
 
     return gameplay;
 }
@@ -64,7 +65,7 @@ void render_timer(Gameplay* gameplay) {
     SDL_GetRendererOutputSize(gameplay->renderer, &window_width, &window_height);
 
     // Position the timer at the top-right corner
-    int x = window_width - 190; // Adjust as needed to fit the timer
+    int x = window_width - 190;
     int y = 10; // Distance from the top
 
     // Render minutes (tens and units)
@@ -72,20 +73,20 @@ void render_timer(Gameplay* gameplay) {
     int minute_units = minutes % 10;
 
     spritesheet_render(gameplay->timer_spritesheet, x, y, 255, minute_tens); // Tens digit
-    x += gameplay->timer_spritesheet->sprite_width; // Reduced spacing between digits
+    x += gameplay->timer_spritesheet->sprite_width - 5;
     spritesheet_render(gameplay->timer_spritesheet, x, y, 255, minute_units); // Units digit
-    x += gameplay->timer_spritesheet->sprite_width;
+    x += gameplay->timer_spritesheet->sprite_width - 5;
 
     // Render point (static sprite index 10 for the point in the spritesheet)
-    spritesheet_render(gameplay->timer_spritesheet, x, y, 255, 10); // Index for point it should be nine but u gotta edit the pic
-    x += gameplay->timer_spritesheet->sprite_width;
+    spritesheet_render(gameplay->dot_spritesheet, x, y, 255, 9); // Index for point
+    x += gameplay->dot_spritesheet->sprite_width - 5;
 
     // Render seconds (tens and units)
     int second_tens = seconds / 10;
     int second_units = seconds % 10;
 
     spritesheet_render(gameplay->timer_spritesheet, x, y, 255, second_tens); // Tens digit
-    x += gameplay->timer_spritesheet->sprite_width - 3;
+    x += gameplay->timer_spritesheet->sprite_width - 5;
     spritesheet_render(gameplay->timer_spritesheet, x, y, 255, second_units); // Units digit
 }
 
