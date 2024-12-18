@@ -2,60 +2,80 @@
 
 ## Description
 
-* Description du projet en quelques phrases.
-* Mentionner le contexte (cours, sigle, université, etc.).
+Le projet *Circles* est un jeu développé dans le cadre du cours de programmation en C. L'objectif est de créer une expérience interactive où le joueur contrôle un triangle pour éviter des obstacles en mouvement. Ce projet met en œuvre les concepts abordés en classe, notamment la gestion des structures, des événements et des animations avec SDL2.
+
 
 ## Auteurs
 
-BELKADI MOHAMMED ESSEDIK BELM87290502
+BELKADI MOHAMMED ESSEDIK  
+Code permanent : BELM87290502  
 
 ## Dépendances
 
-Avant même d'expliquer le fonctionnement de votre programme, décrivez toutes
-les dépendances de votre projet, autant au niveau des logiciels (s'il y en a)
-que des bibliothèques (par exemple SDL2). Fournissez les liens vers les sites
-officiels des dépendances si possible. Ceci permettra à l'utilisateur de savoir
-ce qu'il doit installer pour faire tourner votre programme. Pas besoin
-d'expliquer comment faire l'installation, mais simplement référer aux sites
-officiels.
+Pour exécuter ce jeu, les dépendances suivantes doivent être installées :  
+
+- **SDL2** : Bibliothèque de développement multimédia (https://libsdl.org).  
+- **SDL2_image** : Extension pour gérer les images (https://www.libsdl.org/projects/SDL_image/).  
+- **SDL2_mixer** : Extension pour gérer le son et la musique (https://www.libsdl.org/projects/SDL_mixer/).  
+- **SDL2_ttf** : Extension pour gérer les polices (https://www.libsdl.org/projects/SDL_ttf/).  
+
+Assurez-vous de télécharger et d'installer les versions compatibles pour votre plateforme.
 
 ## Fonctionnement
 
-* Expliquez comment compiler, comment lancer l'application et comment
-  fonctionne le jeu
-* Quel est sont but?
-* Quelles touches permettent de naviguer dans le menu?
-* Quelles touches permettent de déplacer le triangle?
-* N'hésitez pas à inclure des captures d'écran ici, comme ça, ça fait de la
-  publicité pour votre jeu!
+### Compilation et lancement du jeu
+Pour compiler le jeu, exécutez simplement la commande :  
+```bash
+make
+```
+
+pour lancer :
+```bash
+./circles
+```
+
+
+### Description du jeu
+Le but du jeu est de naviguer un triangle dans un espace rempli d'obstacles circulaires en mouvement, tout en évitant les collisions.
+
+
+### Contrôles
+
+-Menu principal :
+
+Utilisez la souris pour naviguer dans le menu.
+Choisissez une difficulté en cliquant sur l'option désirée, puis appuyez sur Play pour lancer la partie.
+
+-Gameplay :
+
+Utilisez la souris pour déplacer le triangle (joueur).
+
 
 ## Plateformes supportées
 
-Indiquez toutes les plateformes sur lesquelles vous avez testé l'application,
-avec la version.
+Le jeu a été testé et développé sur les plateformes suivantes :
+
+Ubuntu 22.04 LTS
 
 ## Références
 
-Citez vos sources ici, s'il y a lieu.
+Aucune référence externe n'a été utilisée pour ce projet, en dehors de la documentation officielle des bibliothèques SDL2.
 
 ## Division des tâches
 
-Donnez ici une liste des tâches de chacun des membres de l'équipe. Utilisez la
-syntaxe suivante (les crochets vides indiquent que la tâche n'est pas
-complétée, les crochets avec un `X` indique que la tâche est complétée):
+Voici les tâches effectuées pour ce projet. Toutes les tâches ont été réalisées par BELKADI MOHAMMED ESSEDIK :
 
-* [ ] Gestion du menu (Alice)
-* [ ] Affichage de la scène (Bob)
-* [ ] Affichage du chronomètre (Carl)
-* [ ] Animation des murs (Bob)
-* [X] Animation du joueur (Alice)
-* [ ] Détection des collisions (Carl)
-* [ ] Affichage d'une partie terminée (Bob)
-* [X] Gestion de la musique principale (Alice)
-* [ ] Gestion des sons lorsqu'on navigue dans le menu (Alice)
-* [ ] Gestion de la musique de fin de partie (Carl)
+* [x] Gestion du menu
+* [x] Affichage de la scène
+* [x] Affichage du chronomètre
+* [x] Animation des murs
+* [X] Animation du joueur
+* [x] Détection des collisions
+* [x] Affichage d'une partie terminée
+* [X] Gestion de la musique principale
+* [x] Gestion des sons lorsqu'on navigue dans le menu
+* [x] Gestion de la musique de fin de partie
 
 ## État du projet
 
-Indiquer si le projet est complété et sans bogue. Sinon, expliquez ce qui
-manque ou ce qui ne fonctionne pas.
+Le projet est fonctionnel et offre une expérience complète. Cependant, il existe une limitation : dans certaines situations, les collisions ne sont pas détectées correctement. Ce problème reste rare et n'impacte pas significativement l'expérience globale du jeu.
