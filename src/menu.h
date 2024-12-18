@@ -2,6 +2,7 @@
 #define MENU_H
 
 #include "sdl2.h"
+#include <SDL2/SDL_mixer.h> 
 #include "constants.h"
 
 // --------------- //
@@ -9,10 +10,15 @@
 // --------------- //
 
 enum menu_state {
+    MENU_NO_FOCUS,
     MENU_PLAY_FOCUS,       // Play choice has focus
     MENU_QUIT_FOCUS,       // Quit choice has focus
     MENU_PLAY,             // Play has been chosen
-    MENU_QUIT              // Play has been chosen
+    MENU_QUIT,              // Play has been chosen
+    MENU_EASY_FOCUS,       // Easy difficulty has focus
+    MENU_MEDIUM_FOCUS,     // Medium difficulty has focus
+    MENU_HARD_FOCUS,        // Hard difficulty has focus
+    MENU_STATE
 };
 
 struct menu {
@@ -21,7 +27,14 @@ struct menu {
     struct spritesheet *title;      // The title sprite
     struct spritesheet *play;       // The play sprite
     struct spritesheet *quit;       // The quit sprite
+    struct spritesheet *difficulty; // New
+    struct spritesheet *easy;       // New
+    struct spritesheet *medium;     // New
+    struct spritesheet *hard;
+    int selected_difficulty;
+    int difficulty_speed; // Speed based on difficulty
     SDL_Renderer *renderer;         // The renderer
+    Mix_Chunk *click_sound;
 };
 
 // --------- //

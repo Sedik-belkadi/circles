@@ -47,6 +47,6 @@ void spritesheet_delete(struct spritesheet *spritesheet);
  * @param sprite       The sprite to render
  */
 void spritesheet_render(struct spritesheet *spritesheet,
-                        int x, int y, int alpha, int frame);
+                        int x, int y, int alpha, int sprite);
 
 #endif

@@ -35,6 +35,7 @@ void spritesheet_delete(struct spritesheet *spritesheet) {
     free(spritesheet);
 }
 
+
 void spritesheet_render(struct spritesheet *spritesheet,
                         int x, int y, int alpha, int sprite) {
     int srcx = spritesheet->sprite_width * (sprite % spritesheet->num_columns);
@@ -45,3 +46,7 @@ void spritesheet_render(struct spritesheet *spritesheet,
     SDL_SetTextureAlphaMod(spritesheet->texture, alpha);
 	SDL_RenderCopy(spritesheet->renderer, spritesheet->texture, &srcrect, &dstrect);
 }
+
+
+
+
