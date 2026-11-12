@@ -215,17 +215,52 @@ void move_obstacles(Gameplay* gameplay, struct menu *menu) {
 
 // Function to check collision between the triangle and obstacles
 int check_collision(Gameplay* gameplay, float triangle_angle) {
+    const float slice_angle = 2 * M_PI / 6;
+    const float triangle_radius = 67.0f;
+    const float triangle_size = 20.0f;
+    const float obstacle_thickness = 10.0f;
+    const float angle_tolerance = atan2f(triangle_size / 2.0f,
+                                         triangle_radius - triangle_size);
+    const float full_rotation = 2 * M_PI;
+
+    if (triangle_angle < 0) {
+        triangle_angle += full_rotation;
+    }
+
     for (int i = 0; i < 6; i++) {
-        float obstacle_angle = gameplay->obstacles[i].angle;
-        float distance = gameplay->obstacles[i].distance;
+        const Obstacle *obstacle = &gameplay->obstacles[i];
+        float start_angle;
+        float end_angle;
+        float distance = obstacle->distance;
+        float obstacle_inner_radius;
+        int angle_matches;
 
-        // Check if the triangle is within the obstacle's bounds
-        float slice_angle = 2 * M_PI / 6;
-        float start_angle = obstacle_angle - slice_angle / 2;
-        float end_angle = obstacle_angle + slice_angle / 2;
+        if (obstacle->reappearance_time > 0) {
+            continue;
+        }
 
-        if (distance <= 67 && triangle_angle >= start_angle && triangle_angle <= end_angle) {
-            return 1; // Collision detected
+        start_angle = obstacle->angle - slice_angle / 18 - 1.0f - angle_tolerance;
+        end_angle = start_angle + slice_angle + 2 * angle_tolerance;
+        obstacle_inner_radius = distance - obstacle_thickness + 1;
+
+        if (start_angle < 0) {
+            start_angle += full_rotation;
+        }
+        if (end_angle < 0) {
+            end_angle += full_rotation;
+        } else if (end_angle >= full_rotation) {
+            end_angle -= full_rotation;
+        }
+
+        if (start_angle <= end_angle) {
+            angle_matches = triangle_angle >= start_angle && triangle_angle <= end_angle;
+        } else {
+            angle_matches = triangle_angle >= start_angle || triangle_angle <= end_angle;
+        }
+
+        if (distance >= triangle_radius - triangle_size &&
+            obstacle_inner_radius <= triangle_radius && angle_matches) {
+            return 1;
         }
     }
     return 0;

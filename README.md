@@ -1,81 +1,58 @@
-# Travail pratique 3 : Le jeu *Circles*
+# Circles
 
-## Description
+**English** | [Français](README.fr.md)
 
-Le projet *Circles* est un jeu développé dans le cadre du cours de programmation en C. L'objectif est de créer une expérience interactive où le joueur contrôle un triangle pour éviter des obstacles en mouvement. Ce projet met en œuvre les concepts abordés en classe, notamment la gestion des structures, des événements et des animations avec SDL2.
+Circles is a C game inspired by *Super Hexagon*, developed as part of a C programming course project. The player guides a triangle around the center of the arena while avoiding approaching obstacles.
 
+## Features
 
-## Auteurs
+- Menu with three difficulty levels
+- Mouse-controlled player movement
+- Moving obstacles and collision detection
+- Survival timer
+- Game-over screen and sound effect
+- Music and sound effects
 
-BELKADI MOHAMMED ESSEDIK  
-Code permanent : BELM87290502  
+## Technologies
 
-## Dépendances
+- C
+- SDL2 for the window, rendering, and events
+- SDL2_image for loading images
+- SDL2_mixer for music and sound effects
+- SDL2_gfx for drawing shapes
 
-Pour exécuter ce jeu, les dépendances suivantes doivent être installées :  
+## Build and run
 
-- **SDL2** : Bibliothèque de développement multimédia (https://libsdl.org).  
-- **SDL2_image** : Extension pour gérer les images (https://www.libsdl.org/projects/SDL_image/).  
-- **SDL2_mixer** : Extension pour gérer le son et la musique (https://www.libsdl.org/projects/SDL_mixer/).  
-- **SDL2_ttf** : Extension pour gérer les polices (https://www.libsdl.org/projects/SDL_ttf/).  
+The project was developed and tested on Ubuntu 22.04. It requires GCC, Make, `sdl2-config`, and the SDL2 development libraries listed above.
 
-Assurez-vous de télécharger et d'installer les versions compatibles pour votre plateforme.
+On Ubuntu, install the dependencies with:
 
-## Fonctionnement
-
-### Compilation et lancement du jeu
-Pour compiler le jeu, exécutez simplement la commande :  
 ```bash
-make
+sudo apt update
+sudo apt install build-essential libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-gfx-dev
 ```
 
-pour lancer :
+From the repository root, build and run the game from the `src` directory:
+
 ```bash
+cd src
+make
 ./circles
 ```
 
+The executable loads assets from `../assets`, so run it from `src` for the asset paths to resolve correctly.
 
-### Description du jeu
-Le but du jeu est de naviguer un triangle dans un espace rempli d'obstacles circulaires en mouvement, tout en évitant les collisions.
+## Controls
 
+- In the menu, move the mouse to navigate the options. Click a difficulty, then click **Play** to start.
+- During gameplay, move the mouse around the center of the window to steer the triangle.
+- Click **Quit** to close the game.
 
-### Contrôles
+## Author
 
--Menu principal :
+Mohammed Essedik Belkadi  
+Completed individually as assignment 3 for the C programming course.
 
-Utilisez la souris pour naviguer dans le menu.
-Choisissez une difficulté en cliquant sur l'option désirée, puis appuyez sur Play pour lancer la partie.
+## References
 
--Gameplay :
-
-Utilisez la souris pour déplacer le triangle (joueur).
-
-
-## Plateformes supportées
-
-Le jeu a été testé et développé sur les plateformes suivantes :
-
-Ubuntu 22.04 LTS
-
-## Références
-
-Aucune référence externe n'a été utilisée pour ce projet, en dehors de la documentation officielle des bibliothèques SDL2.
-
-## Division des tâches
-
-Voici les tâches effectuées pour ce projet. Toutes les tâches ont été réalisées par BELKADI MOHAMMED ESSEDIK :
-
-* [x] Gestion du menu
-* [x] Affichage de la scène
-* [x] Affichage du chronomètre
-* [x] Animation des murs
-* [X] Animation du joueur
-* [x] Détection des collisions
-* [x] Affichage d'une partie terminée
-* [X] Gestion de la musique principale
-* [x] Gestion des sons lorsqu'on navigue dans le menu
-* [x] Gestion de la musique de fin de partie
-
-## État du projet
-
-Le projet est fonctionnel et offre une expérience complète. Cependant, il existe une limitation : dans certaines situations, les collisions ne sont pas détectées correctement. Ce problème reste rare et n'impacte pas significativement l'expérience globale du jeu.
+Official documentation for the SDL2 libraries used in this project.
